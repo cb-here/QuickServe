@@ -108,7 +108,7 @@ def home(request):
         'subservices': subservices,
         'services': services,
         'value': query,
-        'testimonials' = ["Akash Yadav", "Suresh Thakur", "Sanjeev Kumar"]
+        'testimonials': ["Akash Yadav", "Suresh Thakur", "Sanjeev Kumar"]
     }
     
     return render(request, 'pages/index.html', data)
