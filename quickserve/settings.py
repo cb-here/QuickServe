@@ -138,11 +138,15 @@ LOGIN_URL = '/user/login/'
 
 import firebase_admin
 from firebase_admin import credentials
+from dotenv import load_dotenv
 
-FIREBASE_CREDENTIALS = credentials.Certificate('./firebase/quickserve-bea56-firebase-adminsdk-fbsvc-e4620bf83f.json')
+load_dotenv()
 
-firebase_admin.initialize_app(FIREBASE_CREDENTIALS)
+firebase_credentials_str = os.getenv('FIREBASE_CREDENTIALS')
+firebase_credentials_dict = json.loads(firebase_credentials_str)
 
+cred = credentials.Certificate(firebase_credentials_dict)
+firebase_admin.initialize_app(cred)
 
 EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
 EMAIL_HOST = "smtp.gmail.com"
