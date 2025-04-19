@@ -110,11 +110,11 @@
 <section id="testimonials" class="my-16 px-6">
     <h2 class="text-4xl font-bold text-center mb-12 text-indigo-600">What Our Users Say</h2>
     <div class="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
-        {% for i in "123" %}
+        {% for i in ["Akash Yadav", "Suresh Thakur", "Sanjeev Kumar"] %}
         <div class="bg-white p-6 rounded-lg shadow-lg border-l-4 border-indigo-500">
             <p class="text-lg italic text-gray-700">"QuickServe has made my life so much easier. Their services are
                 top-notch and reliable!"</p>
-            <p class="mt-4 text-right text-lg font-bold text-indigo-600">- User {{ i }}</p>
+            <p class="mt-4 text-right text-lg font-bold text-indigo-600">- {{ i }}</p>
         </div>
         {% endfor %}
     </div>
