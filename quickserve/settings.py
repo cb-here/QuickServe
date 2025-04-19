@@ -136,13 +136,18 @@ MEDIA_ROOT = BASE_DIR / 'media'
 
 LOGIN_URL = '/user/login/'
 
+from dotenv import load_dotenv
+
+import json
 import firebase_admin
 from firebase_admin import credentials
 
-FIREBASE_CREDENTIALS = credentials.Certificate('./firebase/quickserve-bea56-firebase-adminsdk-fbsvc-e4620bf83f.json')
+load_dotenv()  # Load .env file
+firebase_creds = json.loads(os.getenv('FIREBASE_CREDENTIALS'))
+firebase_creds['private_key'] = firebase_creds['private_key'].replace('\\n', '\n')
 
-firebase_admin.initialize_app(FIREBASE_CREDENTIALS)
-
+cred = credentials.Certificate(firebase_creds)
+firebase_admin.initialize_app(cred)
 
 EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
 EMAIL_HOST = "smtp.gmail.com"
