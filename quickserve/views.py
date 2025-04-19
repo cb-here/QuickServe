@@ -13,6 +13,7 @@ from django.contrib import messages
 from django.utils.timezone import now, timedelta, datetime
 from booking.models import Booking
 from django.db.models import Q
+from decimal import Decimal, InvalidOperation
 
 @csrf_exempt
 @login_required
@@ -20,15 +21,18 @@ def save_profile_location(request):
     if request.method == 'POST':
         try:
             data = json.loads(request.body.decode('utf-8'))
-            lat = data.get('latitude')
-            lon = data.get('longitude')
 
-            if not lat or not lon:
-                return JsonResponse({'error': 'Latitude and longitude are required.'}, status=400)
+            try:
+                lat = Decimal(str(data.get('latitude')))
+                lon = Decimal(str(data.get('longitude')))
+            except (InvalidOperation, TypeError):
+                return JsonResponse({'error': 'Invalid latitude or longitude format.'}, status=400)
 
             profile, created = Profile.objects.get_or_create(user=request.user)
 
             if (
+                profile.location_lat is not None and
+                profile.location_long is not None and
                 Decimal(str(profile.location_lat)) == lat and 
                 Decimal(str(profile.location_long)) == lon and 
                 profile.address
@@ -39,8 +43,8 @@ def save_profile_location(request):
             if not address:
                 return JsonResponse({'error': 'Could not find an address for the given coordinates.'}, status=404)
 
-            profile.location_lat = lat
-            profile.location_long = lon
+            profile.location_lat = float(lat)
+            profile.location_long = float(lon)
             profile.address = address
             profile.save()
 
