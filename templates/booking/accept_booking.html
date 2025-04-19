@@ -1,0 +1,23 @@
+{% extends 'e_base.html' %}
+
+{% block content %}
+<div class="container mx-auto p-6 bg-white shadow-lg rounded-lg">
+    <h2 class="text-2xl font-semibold mb-6 border-b pb-4">Accept Booking</h2>
+
+    <div class="space-y-4">
+        <p class="text-gray-700"><strong>Service:</strong> {{ booking.sub_service.sub_service_name }}</p>
+        <p class="text-gray-700"><strong>Date:</strong> {{ booking.booking_date }}</p>
+        <p class="text-gray-700"><strong>Time Slot:</strong> {{ booking.time_slot }}</p>
+        <p class="text-gray-700"><strong>Address:</strong> {{ booking.address }}</p>
+    </div>
+
+    <div class="mt-6 flex space-x-4">
+        <form method="POST" class="flex">
+            {% csrf_token %}
+            <button type="submit" class="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500">Accept Booking</button>
+        </form>
+        {% url 'ignore_booking' as url %}
+        <a href="{{url}}" class="px-4 py-2 bg-red-500 text-white rounded-md hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-500">Ignore</a>
+    </div>
+</div>
+{% endblock %}

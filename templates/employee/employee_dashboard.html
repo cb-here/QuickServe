@@ -1,0 +1,233 @@
+{% extends 'e_base.html' %}
+
+{% block content %}
+<div class="max-w-7xl mx-auto mt-10 space-y-12 px-4 sm:px-6 lg:px-8">
+    {% if messages %}
+    <div class="max-w-4xl mx-auto mb-8 space-y-4" id="messages">
+        {% for message in messages %}
+        <div class="p-4 rounded-xl shadow-sm flex items-start justify-between
+            {% if message.tags == 'success' %}
+                bg-green-50 border border-green-200 text-green-700
+            {% elif message.tags == 'error' %}
+                bg-red-50 border border-red-200 text-red-700
+            {% elif message.tags == 'warning' %}
+                bg-yellow-50 border border-yellow-200 text-yellow-700
+            {% else %}
+                bg-blue-50 border border-blue-200 text-blue-700
+            {% endif %}">
+            <div class="flex items-center">
+                <svg class="w-5 h-5 mr-3 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd"
+                        d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z"
+                        clip-rule="evenodd" />
+                </svg>
+                {{ message }}
+            </div>
+            <button onclick="this.parentElement.remove()" class="ml-4 text-gray-500 hover:text-gray-700">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+            </button>
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <div class="bg-blue-600 text-white py-8 px-6 md:px-10 rounded-2xl shadow-lg">
+        <div class="flex flex-col md:flex-row items-center justify-between">
+            <div class="text-center md:text-left">
+                <h1 class="text-4xl font-bold text-white">Welcome, {{ employee.user.first_name }}</h1>
+                <p class="mt-2 text-lg text-blue-100">Your personal dashboard for managing bookings and profile.</p>
+            </div>
+            <div class="mt-4 md:mt-0 flex flex-col md:flex-row items-center space-y-4 md:space-y-0 md:space-x-4">
+                <a href="{% url 'employee_update_profile' %}"
+                    class="bg-white text-blue-600 hover:bg-blue-50 font-bold py-2 px-4 rounded-lg shadow transition-all transform hover:scale-105">
+                    Edit Profile
+                </a>
+        
+                <a href="{% url 'logout' %}"
+                    class="bg-white text-red-600 hover:bg-red-50 font-bold py-2 px-4 rounded-lg shadow transition-all transform hover:scale-105">
+                    Logout
+                </a>
+                <div class="flex items-center space-x-2">
+                    <span class="text-white font-medium">Availability:</span>
+                    <form id="availabilityForm" method="POST" action="{% url 'toggle_availability' %}">
+                        {% csrf_token %}
+                        <label class="switch">
+                            <input type="checkbox" name="is_available" id="availabilityToggle" 
+                                   {% if employee.is_available %}checked{% endif %}>
+                            <span class="slider round"></span>
+                        </label>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <style>
+            .switch {
+                position: relative;
+                display: inline-block;
+                width: 60px;
+                height: 34px;
+            }
+        
+            .switch input {
+                opacity: 0;
+                width: 0;
+                height: 0;
+            }
+            .slider {
+                position: absolute;
+                cursor: pointer;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                background-color: #ccc;
+                transition: 0.4s;
+                border-radius: 34px;
+            }
+            .slider:before {
+                position: absolute;
+                content: "";
+                height: 26px;
+                width: 26px;
+                left: 4px;
+                bottom: 4px;
+                background-color: white;
+                transition: 0.4s;
+                border-radius: 50%;
+            }
+            input:checked + .slider {
+                background-color: #3b82f6;
+            }
+            input:checked + .slider:before {
+                transform: translateX(26px);
+            }
+        </style>
+        <script>
+            document.getElementById('availabilityToggle').addEventListener('change', function() {
+                document.getElementById('availabilityForm').submit();
+            });
+        </script>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <div class="bg-white shadow-lg rounded-2xl p-6">
+            <h2 class="text-xl font-bold text-gray-800 mb-4">Profile Information</h2>
+            <div class="flex flex-col md:flex-row items-center mb-4">
+                <img id="profileImage"
+                    src="{% if employee.profile_picture %}{{ employee.profile_picture.url }}{% else %}https://via.placeholder.com/150{% endif %}"
+                    alt="Profile Picture" class="h-24 w-24 rounded-full object-cover border-4 border-blue-100">
+                <div class="mt-4 md:mt-0 md:ml-4 text-center md:text-left">
+                    <ul class="space-y-2">
+                        <li><strong>Role:</strong> {{ employee.role }}</li>
+                        <li><strong>Skills:</strong>
+                            {% for skill in employee.skills.all %}
+                            <span class="inline-block bg-blue-100 text-blue-800 text-sm font-medium px-2 py-1 rounded-full mt-1">{{ skill }}</span>
+                            {% endfor %}
+                        </li>
+                        <li><strong>Availability:</strong> 
+                            <span class="px-2 py-1 rounded-full text-sm font-medium 
+                                {% if employee.is_available %} bg-green-100 text-green-700 {% else %} bg-red-100 text-red-700 {% endif %}">
+                                {{ employee.is_available|yesno:"Available,Not Available" }}
+                            </span>
+                        </li>
+                        <li><strong>Working Hours:</strong> {{ employee.working_hours_start }} - {{ employee.working_hours_end }}</li>
+                        <li><strong>Hourly Rate:</strong> ₹{{ employee.hourly_rate }}</li>
+                        <li><strong>Email:</strong> {{ employee.email }}</li>
+                        <li><strong>Phone Number:</strong> {{ employee.phone_number }}</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="bg-white shadow-lg rounded-2xl p-6">
+            <h2 class="text-xl font-bold text-gray-800 mb-4">Current Location</h2>
+            <p class="text-gray-700"><strong>Address:</strong> {{ employee.address }}</p>
+        </div>
+        <div class="bg-white shadow-lg rounded-2xl p-6">
+            <h2 class="text-xl font-bold text-gray-800 mb-4">Ratings and Reviews</h2>
+            <p class="text-gray-700">
+                <strong>Average Rating:</strong> 
+                <div class="flex items-center">
+                    {% with full_stars=employee.average_rating|floatformat:0|add:0 %}
+                        {% for i in "12345"|make_list %}
+                            {% if forloop.counter <= full_stars %}
+                                <svg class="w-5 h-5 text-yellow-400" fill="currentColor" viewBox="0 0 24 24">
+                                    <path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/>
+                                </svg>
+                            {% else %}
+                                <svg class="w-5 h-5 text-gray-300" fill="currentColor" viewBox="0 0 24 24">
+                                    <path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/>
+                                </svg>
+                            {% endif %}
+                        {% endfor %}
+                    {% endwith %}
+                    ({{ employee.average_rating|floatformat:1 }}/5.0)
+                </div> 
+            </p>
+        
+            <p class="text-gray-700">
+                <strong>Total Reviews:</strong> 
+                {{ employee.total_reviews }}
+            </p>
+        </div>
+        
+    </div>
+    <div class="bg-white shadow-lg rounded-2xl p-6">
+        <h2 class="text-2xl font-bold text-gray-800 mb-6">Accepted Bookings</h2>
+        {% if accepted_bookings %}
+        <div class="flex items-center justify-center gap-6 mb-6">
+            <a href="?order_by=-booking_date" 
+               class="px-4 py-2 rounded-full text-sm font-medium 
+                      {% if current_order == '-booking_date' %} 
+                          bg-blue-600 text-white 
+                      {% else %} 
+                          bg-gray-100 text-gray-700 hover:bg-gray-200 
+                      {% endif %} transition-colors">
+                Latest Bookings
+            </a>
+            <a href="?order_by=booking_date" 
+               class="px-4 py-2 rounded-full text-sm font-medium 
+                      {% if current_order == 'booking_date' %} 
+                          bg-blue-600 text-white 
+                      {% else %} 
+                          bg-gray-100 text-gray-700 hover:bg-gray-200 
+                      {% endif %} transition-colors">
+                Earliest Bookings
+            </a>
+        </div>
+        <ul class="space-y-6">
+            {% for booking in accepted_bookings %}
+            <li class="p-6 bg-gray-50 rounded-xl hover:shadow-md transition-shadow duration-200 ease-in-out">
+                <div class="flex flex-col md:flex-row md:items-center justify-between mb-4">
+                    <h3 class="text-xl font-semibold text-gray-900">{{ booking.sub_service.sub_service_name }}</h3>
+                    <div class="flex items-center space-x-4 mt-2 md:mt-0">
+                        <span class="px-4 py-2 rounded-full text-white 
+                            {% if booking.status == 'completed' %} bg-green-600 
+                            {% elif booking.status == 'accepted' %} bg-yellow-500 
+                            {% else %} bg-red-500 {% endif %}">
+                            {{ booking.get_status_display }}
+                        </span>
+                        {% if booking.status != 'completed' %}
+                        <a href="{% url 'complete_booking' booking.id %}" 
+                           class="text-blue-600 hover:text-blue-700 hover:underline">
+                            Mark as Complete
+                        </a>
+                        {% endif %}
+                    </div>
+                </div>
+                <div class="text-gray-700 space-y-2">
+                    <p><strong>Price:</strong> ₹{{booking.total_price}}</p>
+                    <p><strong>Booking Date:</strong> {{ booking.booking_date }}</p>
+                    <p><strong>Time Slot:</strong> {{ booking.time_slot }}</p>
+                    <p><strong>Address:</strong> {{ booking.address }}</p>
+                </div>
+            </li>
+            {% endfor %}
+        </ul>
+        {% else %}
+        <p class="text-gray-600 text-center py-8">No accepted bookings yet.</p>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

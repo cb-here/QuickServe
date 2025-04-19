@@ -1,0 +1,52 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="bg-gray-50 py-12">
+    <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+        {% if blog %}
+        <article class="bg-white p-8 lg:p-12 shadow-lg rounded-lg">
+            <header class="mb-8 flex flex-col sm:flex-row items-center justify-between">
+                <div>
+                    <h1 class="text-5xl font-bold text-gray-900 mb-4 flex items-center">
+                        {{ blog.title }}
+                    </h1>
+                    <p class="text-gray-600 text-lg flex items-center">
+                        <svg class="w-5 h-5 text-gray-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5.121 17.804A13.937 13.937 0 0112 15c2.962 0 5.68.98 7.879 2.804M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                        </svg>
+                        <em>By {{ blog.author }} | {{ blog.created_at|date:"F d, Y" }}</em>
+                    </p>
+                </div>
+            </header>
+            <div class="mt-6 p-4 bg-indigo-100 border-l-4 border-indigo-500 text-indigo-700 rounded-lg shadow-md flex items-center">
+                {% if blog.updated_at %}
+                <svg class="w-6 h-6 mr-3 text-indigo-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                </svg>
+                <p class="text-lg">
+                    <strong>Last updated on {{ blog.updated_at|date:"M d, Y" }}:</strong>
+                    This blog has been revised to ensure the information is up-to-date.
+                </p>
+                {% endif %}
+            </div>
+
+            <div class="mt-8">
+                <div class="prose prose-lg mx-auto text-gray-800 leading-relaxed">
+                    {{ blog.content | safe }}
+                </div>
+            </div>
+            
+            <footer class="border-t border-gray-200 pt-6 mt-8 flex items-center justify-center">
+                <svg class="w-6 h-6 text-gray-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h1m0 0h16m-16 0v10m16-10v10M4 5h16M4 5v6m16-6v6" />
+                </svg>
+                <p class="text-gray-500">Thank you for reading! If you enjoyed this blog, share it with your friends.</p>
+            </footer>
+        </article>
+        {% else %}
+        <div class="text-center p-6 bg-red-100 text-xl font-semibold rounded-lg">
+            Something went wrong
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

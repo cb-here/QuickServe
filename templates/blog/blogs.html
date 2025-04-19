@@ -1,0 +1,55 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="w-full py-12 bg-gray-50">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <h2 class="text-4xl font-extrabold text-gray-900 text-center mb-3">Blogs</h2>
+        <!-- sorting bhi karna hai to do -->
+        <div class="flex justify-center items-center gap-4 mb-6">
+            <a href="?order_by=-updated_at"
+               class="px-4 py-2 rounded-full text-sm font-medium transition-colors
+               {% if current_order == '-updated_at' %} 
+                   bg-blue-600 text-white 
+               {% else %} 
+                   bg-gray-100 text-gray-700 hover:bg-gray-200 
+               {% endif %}">
+                Sort by Updated Date
+            </a>
+            <a href="?order_by=-created_at" 
+               class="px-4 py-2 rounded-full text-sm font-medium transition-colors
+               {% if current_order == '-created_at' %} 
+                   bg-blue-600 text-white 
+               {% else %} 
+                   bg-gray-100 text-gray-700 hover:bg-gray-200 
+               {% endif %}">
+                Sort by Created Date
+            </a>
+        </div>
+        <!-- blogs card goes here  -->
+        {% if blogs %}
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+            {% for blog in blogs %}
+            <div class="bg-white p-6 rounded-lg shadow-md hover:shadow-xl transition-shadow duration-300 flex flex-col justify-between">
+                <div>
+                    <h3 class="text-2xl font-semibold text-gray-900 mb-2">{{ blog.title }}</h3>
+                    <p class="text-gray-600"><em>by {{ blog.author }}</em></p>
+                    <p class="text-gray-500 text-sm">{{ blog.created_at|date:"M d, Y" }}</p>
+                    <p class="text-gray-700 mt-4">{{ blog.content|truncatewords:20|safe }}</p>
+                </div>
+                <div class="mt-6">
+                    <a href="{% url 'blog_detail' blog.slug %}" 
+                       class="block w-full px-6 py-4 bg-gradient-to-r from-blue-600 to-purple-600 text-white font-semibold 
+                              rounded-lg shadow-md hover:shadow-lg transition-all transform hover:scale-105">
+                        Read More
+                    </a>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="text-center p-4 bg-red-100 text-xl font-semibold rounded-lg">
+            Blogs are not available right now!
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

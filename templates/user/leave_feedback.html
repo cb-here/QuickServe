@@ -1,0 +1,43 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="min-h-screen bg-gradient-to-r from-green-50 to-blue-50 flex flex-col justify-center items-center px-4">
+    <!-- Header Section -->
+    <div class="text-center mb-8">
+        <h2 class="text-3xl font-bold text-gray-900 flex items-center justify-center gap-2">
+            <svg class="w-8 h-8 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                      d="M9 12h6m-6 4h6m2 2H7a2 2 0 01-2-2V7a2 2 0 012-2h5l2 2h5a2 2 0 012 2v10a2 2 0 01-2 2z" />
+            </svg>
+            Leave Your Feedback
+        </h2>
+        <p class="text-gray-700">
+            We’d love to hear your thoughts on <span class="font-semibold">{{ booking.sub_service.sub_service_name }}</span>.
+        </p>
+    </div>
+
+    <!-- Feedback Form Card -->
+    <div class="w-full max-w-lg bg-white rounded-xl shadow-2xl p-8 border-t-4 border-green-500">
+        <form method="POST" class="space-y-6">
+            {% csrf_token %}
+            <div>
+                <label for="feedback" class="block text-lg font-medium text-gray-700 mb-2">
+                    Your Feedback
+                </label>
+                <textarea id="feedback" name="feedback" rows="5" placeholder="Share your experience..." required
+                          class="w-full p-4 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"></textarea>
+            </div>
+            <div class="flex justify-end">
+                <button type="submit"
+                        class="inline-flex items-center px-6 py-3 bg-green-600 text-white text-lg font-medium rounded-md hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 transition">
+                    <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                              d="M5 13l4 4L19 7" />
+                    </svg>
+                    Send Feedback
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

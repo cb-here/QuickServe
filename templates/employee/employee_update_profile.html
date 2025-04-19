@@ -1,0 +1,167 @@
+{% extends 'e_base.html' %}
+
+{% block content %}
+<div class="w-full max-w-4xl mx-auto mt-10">
+    {% if messages %}
+    <div class="space-y-4 my-4">
+        {% for message in messages %}
+            <div class="p-4 rounded shadow-md 
+                {% if message.tags == 'success' %}
+                    bg-green-100 text-green-700 border-l-4 border-green-500
+                {% elif message.tags == 'error' %}
+                    bg-red-100 text-red-700 border-l-4 border-red-500
+                {% elif message.tags == 'warning' %}
+                    bg-yellow-100 text-yellow-700 border-l-4 border-yellow-500
+                {% else %}
+                    bg-gray-100 text-gray-800 border-l-4 border-gray-400
+                {% endif %}
+            ">
+                {{ message }}
+            </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <div class="bg-blue-600 text-white py-6 px-8 rounded-lg shadow-md">
+        <h1 class="text-3xl font-bold">Update Your Profile</h1>
+        <p class="mt-2 text-lg">Keep your profile up-to-date for better opportunities.</p>
+    </div>
+    <div class="mt-8 bg-white shadow-md rounded-lg p-8">
+        <form method="POST" enctype="multipart/form-data" class="space-y-6">
+            {% csrf_token %}
+            
+            {% if form.non_field_errors %}
+            <div class="bg-red-100 text-red-700 p-4 rounded border-l-4 border-red-500">
+                {% for error in form.non_field_errors %}
+                    <p>{{ error }}</p>
+                {% endfor %}
+            </div>
+            {% endif %}
+            
+            <div class="flex items-center">
+                <div class="mr-4">
+                    <img id="profileImage" src="{% if employee.profile_picture %}{{ employee.profile_picture.url }}{% else %}https://via.placeholder.com/150{% endif %}" alt="Profile Picture" class="h-20 w-20 rounded-full">
+                </div>
+                <div>
+                    <input type="file" id="profilePicture" name="profile_picture" class="hidden">
+                    <label for="profilePicture" class="cursor-pointer bg-blue-600 text-white py-2 px-4 rounded-lg shadow hover:bg-blue-700 transition">Change Profile Picture</label>
+                </div>
+            </div>
+
+            <div>
+                <label for="id_role" class="block text-lg font-medium text-gray-700">Role/Position</label>
+                <div class="mt-1">
+                    {{ form.role }}
+                </div>
+                {% if form.role.errors %}
+                <p class="text-red-600 text-sm mt-1">{{ form.role.errors|striptags }}</p>
+                {% endif %}
+            </div>
+
+            <div>
+                <label for="id_skills" class="block text-lg font-medium text-gray-700">Skills</label>
+                <div class="mt-2 grid grid-cols-2 gap-4">
+                    {% for skill in form.skills.field.queryset %}
+                    <div class="flex items-center">
+                        <input type="checkbox" id="skill_{{ skill.id }}" name="skills" value="{{ skill.id }}"
+                            class="h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500" 
+                            {% if skill.id in form.skills.value %} checked {% endif %}>
+                        <label for="skill_{{ skill.id }}" class="ml-2 text-gray-700">{{ skill }}</label>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% if form.skills.errors %}
+                <p class="text-red-600 text-sm mt-1">{{ form.skills.errors|striptags }}</p>
+                {% endif %}
+            </div>
+
+            <div>
+                <label for="id_is_available" class="block text-lg font-medium text-gray-700">Currently Available</label>
+                <div class="mt-1">
+                    {{ form.is_available }}
+                </div>
+                {% if form.is_available.errors %}
+                <p class="text-red-600 text-sm mt-1">{{ form.is_available.errors|striptags }}</p>
+                {% endif %}
+            </div>
+
+            <div class="grid grid-cols-2 gap-6">
+                <div>
+                    <label for="id_working_hours_start" class="block text-lg font-medium text-gray-700">Start of Working Hours</label>
+                    <div class="mt-1">
+                        {{ form.working_hours_start }}
+                    </div>
+                    {% if form.working_hours_start.errors %}
+                    <p class="text-red-600 text-sm mt-1">{{ form.working_hours_start.errors|striptags }}</p>
+                    {% endif %}
+                </div>
+                <div>
+                    <label for="id_working_hours_end" class="block text-lg font-medium text-gray-700">End of Working Hours</label>
+                    <div class="mt-1">
+                        {{ form.working_hours_end }}
+                    </div>
+                    {% if form.working_hours_end.errors %}
+                    <p class="text-red-600 text-sm mt-1">{{ form.working_hours_end.errors|striptags }}</p>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div>
+                <label for="id_phone_number" class="block text-lg font-medium text-gray-700">Phone Number</label>
+                <div class="mt-1">
+                    {{ form.phone_number }}
+                </div>
+                {% if form.phone_number.errors %}
+                <p class="text-red-600 text-sm mt-1">{{ form.phone_number.errors|striptags }}</p>
+                {% endif %}
+            </div>
+
+            <div>
+                <label for="id_email" class="block text-lg font-medium text-gray-700">Email</label>
+                <div class="mt-1">
+                    {{ form.email }}
+                </div>
+                {% if form.email.errors %}
+                <p class="text-red-600 text-sm mt-1">{{ form.email.errors|striptags }}</p>
+                {% endif %}
+            </div>
+
+            <div>
+                <label for="id_address" class="block text-lg font-medium text-gray-700">Address</label>
+                <div class="mt-1 text-wrap">
+                    {{ form.address }}
+                </div>
+                {% if form.address.errors %}
+                <p class="text-red-600 text-sm mt-1 text-wrap">{{ form.address.errors|striptags }}</p>
+                {% endif %}
+            </div>
+
+            <div>
+                <label for="id_experience_years" class="block text-lg font-medium text-gray-700">Experience (Years)</label>
+                <div class="mt-1">
+                    {{ form.experience_years }}
+                </div>
+                {% if form.experience_years.errors %}
+                <p class="text-red-600 text-sm mt-1">{{ form.experience_years.errors|striptags }}</p>
+                {% endif %}
+            </div>
+            <div>
+                <button type="submit" class="w-full bg-blue-600 text-white font-bold py-2 px-4 rounded hover:bg-blue-700 transition">
+                    Save Changes
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    document.getElementById('profilePicture').addEventListener('change', function(event) {
+        const reader = new FileReader();
+        reader.onload = function() {
+            const output = document.getElementById('profileImage');
+            output.src = reader.result;
+        }
+        reader.readAsDataURL(event.target.files[0]);
+    });
+</script>
+{% endblock %}

@@ -1,0 +1,68 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<div class="w-full mx-auto px-4 sm:px-6 py-8 min-h-screen bg-gradient-to-br from-gray-50 to-blue-50">
+    {% if subservices %}
+    <div class="max-w-7xl mx-auto">
+        <div class="mb-12 text-center">
+            <h1 class="text-4xl md:text-5xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent mb-4">
+                {{ service.service_name }} Services
+            </h1>
+            <p class="text-lg text-gray-600 max-w-2xl mx-auto">Explore our premium selection of specialized services</p>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+            {% for subservice in subservices %}
+            <div class="group relative bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 overflow-hidden">
+                <div class="relative aspect-video overflow-hidden">
+                    <img src="{{ subservice.sub_service_image.url }}" 
+                         alt="{{ subservice.sub_service_name }}" 
+                         class="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-300">
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent"></div>
+                    <span class="absolute top-4 right-4 bg-white/90 px-3 py-1 rounded-full text-sm font-semibold text-blue-600">
+                        Popular Choice
+                    </span>
+                </div>
+                <div class="p-6">
+                    <h3 class="text-2xl font-bold text-gray-800 mb-3">{{ subservice.sub_service_name }}</h3>
+                    <p class="text-gray-600 mb-4 line-clamp-3">
+                        {{ subservice.sub_service_description|safe }}
+                    </p>
+                    
+                    <div class="flex items-center justify-between">
+                        <div class="space-y-1">
+                            <p class="text-lg font-bold text-green-600">
+                                ₹{{ subservice.price }}
+                                <span class="text-sm font-normal text-gray-500">/ service</span>
+                            </p>
+                        </div>
+                        <a href="{% url 'book_service' subservice.slug %}" 
+                           class="inline-flex items-center px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg transition-colors duration-300">
+                            Book Now
+                            <svg class="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"></path>
+                            </svg>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% else %}
+    <div class="max-w-2xl mx-auto text-center py-20">
+        <div class="mb-8 inline-flex bg-red-100 p-4 rounded-full">
+            <svg class="w-12 h-12 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+            </svg>
+        </div>
+        <h2 class="text-3xl font-bold text-gray-800 mb-4">No Services Available</h2>
+        <p class="text-gray-600 mb-8">We currently don't have any services listed for {{ service.service_name }}. Please check back later!</p>
+        <a href="/home" class="inline-flex items-center px-6 py-3 bg-gray-800 hover:bg-gray-900 text-white rounded-lg font-semibold transition-colors">
+            ← Back to Home
+        </a>
+    </div>
+    {% endif %}
+</div>
+
+{% endblock %}
