@@ -107,8 +107,10 @@ def home(request):
         'servicesData': servicesData,
         'subservices': subservices,
         'services': services,
-        'value': query
+        'value': query,
+        'testimonials' = ["Akash Yadav", "Suresh Thakur", "Sanjeev Kumar"]
     }
+    
     return render(request, 'pages/index.html', data)
 
 def subservices(request, service_slug):
