@@ -12,148 +12,191 @@
     <link rel="stylesheet" href="/static/css/output.css">
 </head>
 <body class="font-sans">
-    <header class="w-full sticky top-0 bg-gradient-to-r from-gray-800 to-gray-900 shadow-xl z-50">
-        <nav class="container mx-auto px-4 py-3 flex flex-wrap items-center justify-between">
-            <div class="flex items-center">
-                <a href="{% url 'home' %}" class="text-3xl font-bold text-white hover:text-orange-400 transition-colors duration-300 flex items-center">
+    <header class="w-full top-0 bg-gradient-to-r from-gray-800 to-gray-900 shadow-xl z-50 sticky">
+        <div class="container mx-auto px-4">
+            <!-- Top Row - Logo, Search, Auth -->
+            <div class="flex items-center justify-between py-2 gap-2">
+                <!-- Logo -->
+                <a href="{% url 'home' %}" class="text-xl font-bold text-white hover:text-orange-400 transition-colors duration-300 shrink-0">
                     QuickServe
                 </a>
+    
+                <!-- Search - Hidden on small screens, shown on md+ -->
+                <div class="hidden md:flex flex-1 mx-2 max-w-md">
+                    <form method="get" class="flex w-full" action="/search/">
+                        <input type="text" placeholder="Search..." name="serviceName" value="{{ value }}"
+                               class="flex-grow p-2 text-sm border border-gray-600 bg-gray-700 text-white rounded-l-full focus:ring-2 focus:ring-orange-500 focus:border-orange-500 transition-all duration-300 outline-none placeholder-gray-400">
+                        <button type="submit" 
+                                class="p-2 px-3 bg-orange-500 text-white font-semibold rounded-r-full hover:bg-orange-600 transition-all duration-300">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                            </svg>
+                        </button>
+                    </form>
+                </div>
+    
+                <!-- Auth Buttons and Mobile Search Toggle -->
+                <div class="flex items-center space-x-2">
+                    <!-- Mobile Search Toggle - Visible only on small screens -->
+                    <button id="mobileSearchToggle" class="md:hidden p-2 text-gray-300 hover:text-orange-400">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                        </svg>
+                    </button>
+                    
+                    {% if user.is_authenticated %}
+                        <!-- Profile Dropdown -->
+                        <div class="relative group">
+                            <button class="flex items-center focus:outline-none hover:bg-gray-700 rounded-full p-1 transition-colors duration-300">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 text-gray-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 14c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm0 2c-5.523 0-10 4.477-10 10h20c0-5.523-4.477-10-10-10z" />
+                                </svg>
+                            </button>
+                            <div class="absolute right-0 mt-2 w-48 bg-white text-gray-800 rounded-lg shadow-xl hidden group-hover:block border border-gray-100">
+                                <a href="{% url 'profile' %}" class="block px-4 py-2 hover:bg-gray-50 rounded-t-lg">Profile</a>
+                                <a href="{% url 'bookings' %}" class="block px-4 py-2 hover:bg-gray-50">Orders</a>
+                                <a href="{% url 'logout' %}" class="block px-4 py-2 text-red-500 hover:bg-red-50 rounded-b-lg">Logout</a>
+                            </div>
+                        </div>
+                    {% else %}
+                        <a href="{% url 'login' %}" class="bg-orange-500 text-white px-3 py-1 text-sm rounded-full hover:bg-orange-600 transition-colors duration-300">
+                            Sign In
+                        </a>
+                        <a href="{% url 'register' %}" class="bg-transparent border border-orange-500 text-orange-500 px-3 py-1 text-sm rounded-full hover:bg-orange-500 hover:text-white transition-colors duration-300">
+                            Sign Up
+                        </a>
+                    {% endif %}
+                </div>
             </div>
-            <div class="flex-1 mx-4 my-2 md:my-0">
-                <form method="get" class="flex w-full max-w-2xl mx-auto" action="/search/">
-                    <input type="text" placeholder="Search for services..." name="serviceName" value="{{ value }}"
-                           class="flex-grow p-3 text-lg border border-gray-600 bg-gray-700 text-white rounded-l-full focus:ring-2 focus:ring-orange-500 focus:border-orange-500 transition-all duration-300 outline-none placeholder-gray-400 shadow-sm hover:shadow-md focus:shadow-lg">
+    
+            <!-- Mobile Search - Hidden by default -->
+            <div id="mobileSearch" class="hidden md:hidden py-2">
+                <form method="get" class="flex w-full" action="/search/">
+                    <input type="text" placeholder="Search services..." name="serviceName" value="{{ value }}"
+                           class="flex-grow p-2 text-sm border border-gray-600 bg-gray-700 text-white rounded-l-full focus:ring-2 focus:ring-orange-500 focus:border-orange-500 outline-none placeholder-gray-400">
                     <button type="submit" 
-                            class="p-3 px-6 bg-orange-500 text-white font-semibold rounded-r-full hover:bg-orange-600 transition-all duration-300 shadow-sm hover:shadow-md flex items-center">
-                        <span class="hidden md:inline">Search</span>
-                        <svg class="w-5 h-5 md:ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            class="p-2 px-3 bg-orange-500 text-white font-semibold rounded-r-full hover:bg-orange-600">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
                         </svg>
                     </button>
                 </form>
             </div>
     
-            <div class="flex items-center space-x-4">
+            <!-- Location Bar - Always visible but compact -->
+            <div class="py-1 pb-2">
                 {% if user.is_authenticated %}
-                    <div class="relative group">
-                        <button id="dropdownButton" class="flex items-center focus:outline-none hover:bg-gray-700 rounded-full p-2 transition-colors duration-300">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8 text-gray-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 14c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm0 2c-5.523 0-10 4.477-10 10h20c0-5.523-4.477-10-10-10z" />
-                            </svg>
-                        </button>
-                        <div id="dropdownMenu"
-                            class="absolute right-0 mt-2 w-48 bg-white text-gray-800 rounded-lg shadow-xl hidden group-hover:block border border-gray-100">
-                            <a href="{% url 'profile' %}" class="block px-4 py-2 hover:bg-gray-50 rounded-t-lg">Profile</a>
-                            <a href="{% url 'bookings' %}" class="block px-4 py-2 hover:bg-gray-50">Orders</a>
-                            <a href="{% url 'logout' %}" class="block px-4 py-2 text-red-500 hover:bg-red-50 rounded-b-lg">Logout</a>
-                        </div>
-                    </div>
-                {% else %}
-                    <a href="{% url 'login' %}" class="bg-orange-500 text-white px-4 py-2 rounded-full hover:bg-orange-600 transition-colors duration-300 shadow-sm hover:shadow-md">
-                        Sign In
-                    </a>
-                    <a href="{% url 'register' %}" class="bg-transparent border border-orange-500 text-orange-500 px-4 py-2 rounded-full hover:bg-orange-500 hover:text-white transition-colors duration-300 shadow-sm hover:shadow-md">
-                        Sign Up
-                    </a>
-                {% endif %}
-            </div>
-        </nav>
-    
-        <div class="bg-gradient-to-r from-gray-800 to-gray-900 py-3 shadow-lg">
-            <div class="container mx-auto px-4 flex items-center justify-center">
-                {% if user.is_authenticated %}
-                <div id="location-container" class="flex items-center space-x-4 bg-gray-700/50 backdrop-blur-sm rounded-xl p-3 shadow-inner">
-                    <!-- Location Icon -->
-                    <div class="p-2 bg-orange-500/10 rounded-lg">
-                        <svg class="w-6 h-6 text-orange-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <div id="location-container" class="flex items-center justify-between bg-gray-700/50 backdrop-blur-sm rounded-lg p-2 text-sm">
+                    <div class="flex items-center space-x-2">
+                        <svg class="w-4 h-4 text-orange-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
                                 d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
                                 d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
                         </svg>
-                    </div>
-        
-                    <!-- Address Content -->
-                    <div class="flex items-center space-x-3">
-                        <!-- Loader -->
-                        <div id="loader" class="w-5 h-5 border-2 border-gray-300 border-t-orange-500 rounded-full animate-spin"></div>
                         
-                        <p id="address" class="text-gray-100 font-medium truncate max-w-[200px] md:max-w-[400px] transition-opacity duration-300"></p>
-                        <p id="location-error" class="hidden text-red-400 text-sm"></p>
+                        <div class="flex items-center space-x-2">
+                            <div id="loader" class="w-4 h-4 border-2 border-gray-300 border-t-orange-500 rounded-full animate-spin"></div>
+                            <p id="address" class="text-gray-100 truncate max-w-[120px] sm:max-w-[200px] md:max-w-[300px]"></p>
+                            <p id="location-error" class="hidden text-red-400 text-xs"></p>
+                        </div>
                     </div>
-                    <button id="refresh-location" class="p-2 bg-orange-500/10 hover:bg-orange-500/20 rounded-lg transition-all duration-300 group"
+                    <button id="refresh-location" class="p-1 text-orange-400 hover:text-orange-300 transition-all"
                             title="Refresh location">
-                        <svg class="w-5 h-5 text-orange-400 group-hover:rotate-180 transition-transform duration-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
                                 d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
                         </svg>
                     </button>
                 </div>
                 {% else %}
-                <div class="flex items-center space-x-3 bg-gray-700/50 backdrop-blur-sm rounded-xl p-3 shadow-inner">
-                    <svg class="w-6 h-6 text-orange-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <div class="flex items-center justify-center bg-gray-700/50 backdrop-blur-sm rounded-lg p-2 text-sm">
+                    <svg class="w-4 h-4 text-orange-400 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
                             d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path>
                     </svg>
-                    <p class="text-orange-400 font-medium truncate">Please log in to see your address</p>
+                    <p class="text-orange-400 truncate">Log in to see address</p>
                 </div>
                 {% endif %}
             </div>
         </div>
+    
         <script>
             document.addEventListener("DOMContentLoaded", function () {
+                // Toggle mobile search
+                const mobileSearchToggle = document.getElementById('mobileSearchToggle');
+                const mobileSearch = document.getElementById('mobileSearch');
+                
+                if (mobileSearchToggle && mobileSearch) {
+                    mobileSearchToggle.addEventListener('click', () => {
+                        mobileSearch.classList.toggle('hidden');
+                        // Focus the input when search is shown
+                        if (!mobileSearch.classList.contains('hidden')) {
+                            mobileSearch.querySelector('input').focus();
+                        }
+                    });
+                }
+    
+                // Close mobile search when clicking outside
+                document.addEventListener('click', function(event) {
+                    if (mobileSearch && !mobileSearch.contains(event.target) && 
+                        mobileSearchToggle && !mobileSearchToggle.contains(event.target) &&
+                        !mobileSearch.classList.contains('hidden')) {
+                        mobileSearch.classList.add('hidden');
+                    }
+                });
+    
+                // Location functionality
                 const loader = document.getElementById('loader');
                 const addressElement = document.getElementById('address');
                 const errorElement = document.getElementById('location-error');
                 const refreshButton = document.getElementById('refresh-location');
-                updateLocation();
-                refreshButton?.addEventListener('click', () => {
-                    refreshButton.classList.add('animate-spin');
-                    updateLocation().finally(() => {
-                        setTimeout(() => refreshButton.classList.remove('animate-spin'), 500);
+                
+                if (refreshButton) {
+                    updateLocation();
+                    refreshButton.addEventListener('click', () => {
+                        updateLocation();
                     });
-                });
-            
+                }
+    
                 async function updateLocation() {
                     try {
                         showLoading();
                         clearError();
-            
+    
                         const response = await fetch('/get-location/');
                         if (!response.ok) throw new Error('Failed to fetch address');
                         
                         const data = await response.json();
                         updateDisplay(data.address);
-            
+    
                     } catch (error) {
                         showError(error.message);
                     } finally {
                         hideLoading();
                     }
                 }
-            
+    
                 function updateDisplay(address) {
                     addressElement.textContent = address || 'Location not available';
                     addressElement.classList.remove('hidden');
-                    addressElement.style.opacity = '0';
-                    setTimeout(() => addressElement.style.opacity = '1', 10); // Fade-in effect
                 }
-            
+    
                 function showLoading() {
                     loader.classList.remove('hidden');
                     addressElement.classList.add('hidden');
                 }
-            
+    
                 function hideLoading() {
                     loader.classList.add('hidden');
                 }
-            
+    
                 function showError(message) {
                     errorElement.textContent = message;
                     errorElement.classList.remove('hidden');
                     addressElement.classList.add('hidden');
                 }
-            
+    
                 function clearError() {
                     errorElement.classList.add('hidden');
                 }
