@@ -5,6 +5,7 @@ certifi==2024.12.14
 cffi==1.17.1
 charset-normalizer==3.4.0
 cryptography==44.0.0
+dj-database-url==2.3.0
 Django==5.1
 django-autoslug==1.9.9
 django-tinymce==4.1.0
@@ -36,9 +37,11 @@ pyasn1_modules==0.4.1
 pycparser==2.22
 PyJWT==2.10.1
 pyparsing==3.2.1
+python-decouple==3.8
 requests==2.32.3
 rsa==4.9
 sqlparse==0.5.1
+typing_extensions==4.13.2
 tzdata==2024.1
 uritemplate==4.1.1
 urllib3==2.2.3

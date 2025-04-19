@@ -3,3 +3,4 @@ static/js/firebase-config.js
 static/js/main.js
 node_modules
 employee/templates/firebase-messaging-sw.js
+.env
