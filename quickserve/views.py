@@ -240,30 +240,3 @@ def search_sub_services(request):
             Q(sub_service_name__icontains=query)
         )
     return render(request, 'pages/search.html', {'results': results, 'query': query})
-
-from django.http import HttpResponse
-from django.core.management import call_command
-from django.contrib.auth import get_user_model
-
-def run_migrations(request):
-    try:
-        call_command('migrate')
-        return HttpResponse("✅ Migrations completed.")
-    except Exception as e:
-        return HttpResponse(f"❌ Migration failed: {str(e)}")
-
-def create_superuser(request):
-    User = get_user_model()
-    created = []
-    users = [
-        {'username': 'cbhere', 'email': 'cbv934@gmail.com', 'password': 'cbhere@9090'},
-        {'username': 'govinda', 'email': 'govindaprajapati878@gmail.com', 'password': 'govindapraj878'},
-    ]
-    for user_data in users:
-        if not User.objects.filter(username=user_data['username']).exists():
-            User.objects.create_superuser(**user_data)
-            created.append(user_data['username'])
-
-    if created:
-        return HttpResponse(f"✅ Superusers created: {', '.join(created)}")
-    return HttpResponse("ℹ️ Superusers already exist.")

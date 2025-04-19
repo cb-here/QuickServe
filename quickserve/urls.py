@@ -8,8 +8,6 @@ from django.views.generic import TemplateView
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path("run-migrations/", views.run_migrations),
-    path("create-admins/", views.create_superuser),
     path("check-user-role/", views.check_user_role, name='check-user-role'),
     path('', views.home, name='home'),
     path('home/', views.home, name='home'),
