@@ -2,7 +2,7 @@
 QuickServe is a web-based platform that connects users with local service providers in real-time. Whether it's an emergency repair, home cleaning, or any other service, QuickServe makes booking fast, simple, and reliable.
 
 🌐 Live Demo
-(Add your deployment link here, e.g., https://quickserve.example.com)
+https://quickserve-v689.onrender.com/
 
 📌 Features
 🧾 User-friendly booking interface for services
