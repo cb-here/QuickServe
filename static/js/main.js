@@ -30,7 +30,12 @@ async function requestNotificationPermission() {
 
 async function getFCMToken() {
     try {
-        const currentToken = await getToken(messaging, { vapidKey: "BHWRPMYFEEQ7qnfU7tfXHH4QPk9_2rSSyv0-XvdgayxKhTPY_5gk01H9K1MGELgkCbRgzGI8DqD2H_QUhkbs67k" });
+        const registration = await navigator.serviceWorker.ready;
+
+        const currentToken = await getToken(messaging, {
+            vapidKey: "BHWRPMYFEEQ7qnfU7tfXHH4QPk9_2rSSyv0-XvdgayxKhTPY_5gk01H9K1MGELgkCbRgzGI8DqD2H_QUhkbs67k",
+            serviceWorkerRegistration: registration   // ✅ THIS IS IMPORTANT
+        });
 
         if (currentToken) {
             console.log("FCM Token generated:", currentToken);
@@ -44,7 +49,7 @@ async function getFCMToken() {
             console.warn("No registration token available.");
         }
     } catch (error) {
-        console.error(" Error getting FCM token:", error);
+        console.error("Error getting FCM token:", error);
     }
 }
 
