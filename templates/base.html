@@ -47,12 +47,12 @@
                     {% if user.is_authenticated %}
                         <!-- Profile Dropdown -->
                         <div class="relative group">
-                            <button class="flex items-center focus:outline-none hover:bg-gray-700 rounded-full p-1 transition-colors duration-300">
+                            <button id="dropdownButton" class="flex items-center focus:outline-none hover:bg-gray-700 rounded-full p-1 transition-colors duration-300">
                                 <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 text-gray-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 14c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm0 2c-5.523 0-10 4.477-10 10h20c0-5.523-4.477-10-10-10z" />
                                 </svg>
                             </button>
-                            <div class="absolute right-0 mt-2 w-48 bg-white text-gray-800 rounded-lg shadow-xl hidden group-hover:block border border-gray-100">
+                            <div id="dropdownMenu" class="z-10 absolute right-0 mt-2 w-48 bg-white text-gray-800 rounded-lg shadow-xl hidden group-hover:block border border-gray-100">
                                 <a href="{% url 'profile' %}" class="block px-4 py-2 hover:bg-gray-50 rounded-t-lg">Profile</a>
                                 <a href="{% url 'bookings' %}" class="block px-4 py-2 hover:bg-gray-50">Orders</a>
                                 <a href="{% url 'logout' %}" class="block px-4 py-2 text-red-500 hover:bg-red-50 rounded-b-lg">Logout</a>
@@ -84,31 +84,40 @@
             </div>
     
             <!-- Location Bar - Always visible but compact -->
-            <div class="py-1 pb-2">
+            <div class="z-0 py-1 pb-2">
                 {% if user.is_authenticated %}
-                <div id="location-container" class="flex items-center justify-between bg-gray-700/50 backdrop-blur-sm rounded-lg p-2 text-sm">
-                    <div class="flex items-center space-x-2">
-                        <svg class="w-4 h-4 text-orange-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <div id="location-container" class="flex flex-wrap items-center space-x-4 bg-gray-700/50 backdrop-blur-sm rounded-xl p-3 shadow-inner w-full">
+                    <!-- Location Icon -->
+                    <div class="p-2 bg-orange-500/10 rounded-lg">
+                        <svg class="w-6 h-6 text-orange-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
                                 d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
                                 d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
                         </svg>
-                        
-                        <div class="flex items-center space-x-2">
-                            <div id="loader" class="w-4 h-4 border-2 border-gray-300 border-t-orange-500 rounded-full animate-spin"></div>
-                            <p id="address" class="text-gray-100 truncate max-w-[120px] sm:max-w-[200px] md:max-w-[300px]"></p>
-                            <p id="location-error" class="hidden text-red-400 text-xs"></p>
-                        </div>
                     </div>
-                    <button id="refresh-location" class="p-1 text-orange-400 hover:text-orange-300 transition-all"
+                
+                    <!-- Address Content -->
+                    <div class="flex-1 min-w-0 flex flex-col sm:flex-row sm:items-center sm:space-x-3 mt-2 sm:mt-0">
+                        <!-- Loader -->
+                        <div id="loader" class="w-5 h-5 border-2 border-gray-300 border-t-orange-500 rounded-full animate-spin"></div>
+                
+                        <!-- Address Display -->
+                        <p id="address" class="text-gray-100 font-medium break-words whitespace-normal mt-1 sm:mt-0 max-w-full sm:max-w-[300px] transition-opacity duration-300"></p>
+                
+                        <!-- Error Message -->
+                        <p id="location-error" class="hidden text-red-400 text-sm"></p>
+                    </div>
+                
+                    <!-- Refresh Button -->
+                    <button id="refresh-location" class="p-2 bg-orange-500/10 hover:bg-orange-500/20 rounded-lg transition-all duration-300 group mt-2 sm:mt-0"
                             title="Refresh location">
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <svg class="w-5 h-5 text-orange-400 group-hover:rotate-180 transition-transform duration-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
                                 d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
                         </svg>
                     </button>
-                </div>
+                </div>                
                 {% else %}
                 <div class="flex items-center justify-center bg-gray-700/50 backdrop-blur-sm rounded-lg p-2 text-sm">
                     <svg class="w-4 h-4 text-orange-400 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -295,8 +304,8 @@
                 href="{{url}}" class="bg-yellow-300 underline">QuickServe</a>
         </div>
     </footer>
-    <script src="/static/timer.js"></script>
     <script src="/static/js/dropdown.js"></script>
+    <script src="/static/timer.js"></script>
     <script src="/static/js/get_user_location.js"></script>
 </body>
 </html>

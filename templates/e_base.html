@@ -23,6 +23,8 @@
                     QuickServe
                 </a>
             </div>
+    
+            <!-- Desktop Nav -->
             <ul class="hidden md:flex space-x-6 font-medium text-lg">
                 <li>
                     {% url 'employee_home' as home_url %}
@@ -37,46 +39,37 @@
                     </a>
                 </li>
                 <li>
-                    <div class="bg-white text-gray-700 p-2 rounded-lg shadow-md flex items-center w-full md:w-auto md:shrink-0">
+                    <div class="bg-white text-gray-700 p-2 rounded-lg shadow-md flex items-center w-full md:w-auto">
                         {% if user.is_authenticated %}
-                            <div id="location-container" class="flex items-center">
-                                <!-- Loader (Initially Visible) -->
-                                <div id="loader" class="w-5 h-5 border-2 border-gray-300 border-t-blue-500 rounded-full animate-spin"></div>
-                                
-                                <!-- Address (Initially Hidden) -->
-                                <p id="address" class="hidden truncate ml-2"></p>
+                            <div id="location-desktop" class="flex items-center">
+                                <div id="loader-desktop" class="w-5 h-5 border-2 border-gray-300 border-t-blue-500 rounded-full animate-spin"></div>
+                                <p id="address-desktop" class="hidden truncate ml-2"></p>
                             </div>
-                    
                             <script>
                                 document.addEventListener("DOMContentLoaded", function () {
-                                    const loader = document.getElementById("loader");
-                                    const addressElement = document.getElementById("address");
-                                    const storedAddress = localStorage.getItem("userAddress"); // Check if address is saved
-                    
-                                    if (storedAddress) {
-                                        // If address is already stored, show it immediately
-                                        addressElement.innerHTML = `📍 ${storedAddress}`;
-                                        addressElement.classList.remove("hidden");
-                                        addressElement.classList.add("text-green-600");
+                                    const loader = document.getElementById("loader-desktop");
+                                    const address = document.getElementById("address-desktop");
+                                    const stored = localStorage.getItem("userAddress");
+                                    if (stored) {
+                                        address.innerHTML = `📍 ${stored}`;
+                                        address.classList.remove("hidden");
+                                        address.classList.add("text-green-600");
                                         loader.classList.add("hidden");
                                     } else {
-                                        // Otherwise, simulate fetching from backend
                                         setTimeout(() => {
-                                            const address = "{{ user.profile.address|default:'' }}"; // Backend data
-                    
-                                            if (address.trim() !== "") {
-                                                addressElement.innerHTML = `📍 ${address}`;
-                                                addressElement.classList.remove("hidden");
-                                                addressElement.classList.add("text-green-600");
-                                                localStorage.setItem("userAddress", address); // Save in localStorage
+                                            const addr = "{{ user.profile.address|default:'' }}";
+                                            if (addr.trim() !== "") {
+                                                address.innerHTML = `📍${addr}`;
+                                                address.classList.remove("hidden");
+                                                address.classList.add("text-green-600");
+                                                localStorage.setItem("userAddress", addr);
                                             } else {
-                                                addressElement.innerHTML = "Address not available.";
-                                                addressElement.classList.remove("hidden");
-                                                addressElement.classList.add("text-red-600");
+                                                address.innerHTML = "Address not available.";
+                                                address.classList.remove("hidden");
+                                                address.classList.add("text-red-600");
                                             }
-                    
-                                            loader.classList.add("hidden"); // Hide loader after fetching
-                                        }, 2000); // Simulating a 2s delay
+                                            loader.classList.add("hidden");
+                                        }, 2000);
                                     }
                                 });
                             </script>
@@ -84,134 +77,74 @@
                             <p class="text-blue-500 font-medium truncate">Please log in to see your address.</p>
                         {% endif %}
                     </div>
-                    
                 </li>
             </ul>
+    
+            <!-- Hamburger Icon -->
             <button id="dropdownButton" class="md:hidden text-white hover:text-blue-400 duration-200 focus:outline-none">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
                 </svg>
             </button>
-            <ul id="dropdownMenu" class="absolute top-16 right-4 w-64 bg-gray-700 text-white rounded-lg shadow-lg hidden">
-                <li class="font-medium text-lg px-4 py-2 hover:bg-gray-600 duration-200">
-                    <a href="{{ home_url }}" class="{% if request.path == home_url %}text-blue-400{% else %}hover:text-blue-400{% endif %} duration-200">
-                        Home
-                    </a>
+        </nav>
+    
+        <!-- Mobile Menu -->
+        <div id="dropdownMenu" class="md:hidden hidden px-4 pb-4">
+            <ul class="bg-gray-800 rounded-lg shadow-lg divide-y divide-gray-600">
+                <li class="py-2 px-4">
+                    <a href="{{ home_url }}" class="{% if request.path == home_url %}text-blue-400{% else %}hover:text-blue-400{% endif %}">Home</a>
                 </li>
-                <li class="font-medium text-lg px-4 py-2 hover:bg-gray-600 duration-200">
-                    <a href="{{ about_url }}" class="{% if request.path == about_url %}text-blue-400{% else %}hover:text-blue-400{% endif %} duration-200">
-                        About Us
-                    </a>
+                <li class="py-2 px-4">
+                    <a href="{{ about_url }}" class="{% if request.path == about_url %}text-blue-400{% else %}hover:text-blue-400{% endif %}">About Us</a>
                 </li>
-                <li class="font-medium text-sm px-4 py-2">
-                    <div class="bg-gradient-to-r from-gray-800 to-gray-900 py-3 shadow-lg">
-                        <div class="container mx-auto px-4 flex items-center justify-center">
-                            {% if user.is_authenticated %}
-                            <div id="location-container" class="flex items-center space-x-4 bg-gray-700/50 backdrop-blur-sm rounded-xl p-3 shadow-inner">
-                                <!-- Location Icon -->
-                                <div class="p-2 bg-orange-500/10 rounded-lg">
-                                    <svg class="w-6 h-6 text-orange-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
-                                            d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
-                                            d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
-                                    </svg>
-                                </div>
-                    
-                                <!-- Address Content -->
-                                <div class="flex items-center space-x-3">
-                                    <!-- Loader -->
-                                    <div id="loader" class="w-5 h-5 border-2 border-gray-300 border-t-orange-500 rounded-full animate-spin"></div>
-                                    
-                                    <!-- Address Display -->
-                                    <p id="address" class="text-gray-100 font-medium truncate max-w-[200px] md:max-w-[400px] transition-opacity duration-300"></p>
-                                    
-                                    <!-- Error Message -->
-                                    <p id="location-error" class="hidden text-red-400 text-sm"></p>
-                                </div>
-                    
-                                <!-- Refresh Button -->
-                                <button id="refresh-location" class="p-2 bg-orange-500/10 hover:bg-orange-500/20 rounded-lg transition-all duration-300 group"
-                                        title="Refresh location">
-                                    <svg class="w-5 h-5 text-orange-400 group-hover:rotate-180 transition-transform duration-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
-                                            d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
-                                    </svg>
-                                </button>
-                            </div>
-                            {% else %}
-                            <div class="flex items-center space-x-3 bg-gray-700/50 backdrop-blur-sm rounded-xl p-3 shadow-inner">
-                                <svg class="w-6 h-6 text-orange-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
-                                        d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path>
-                                </svg>
-                                <p class="text-orange-400 font-medium truncate">Please log in to see your address</p>
-                            </div>
-                            {% endif %}
+                <li class="py-3 px-4">
+                    {% if user.is_authenticated %}
+                    <div class="flex items-center space-x-3 bg-gray-700/50 rounded-xl p-3 shadow-inner">
+                        <svg class="w-6 h-6 text-orange-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                        </svg>
+                        <div>
+                            <div id="loader-mobile" class="w-5 h-5 border-2 border-gray-300 border-t-orange-500 rounded-full animate-spin"></div>
+                            <p id="address-mobile" class="hidden text-sm text-green-400 mt-1"></p>
+                            <p id="error-mobile" class="hidden text-red-400 text-sm"></p>
                         </div>
                     </div>
                     <script>
                         document.addEventListener("DOMContentLoaded", function () {
-                            const loader = document.getElementById('loader');
-                            const addressElement = document.getElementById('address');
-                            const errorElement = document.getElementById('location-error');
-                            const refreshButton = document.getElementById('refresh-location');
-                            updateLocation();
-                            refreshButton?.addEventListener('click', () => {
-                                refreshButton.classList.add('animate-spin');
-                                updateLocation().finally(() => {
-                                    setTimeout(() => refreshButton.classList.remove('animate-spin'), 500);
-                                });
-                            });
-                        
-                            async function updateLocation() {
+                            const loader = document.getElementById('loader-mobile');
+                            const address = document.getElementById('address-mobile');
+                            const error = document.getElementById('error-mobile');
+    
+                            async function loadAddress() {
+                                loader.classList.remove('hidden');
+                                address.classList.add('hidden');
+                                error.classList.add('hidden');
                                 try {
-                                    showLoading();
-                                    clearError();
-                        
-                                    const response = await fetch('/get-location/');
-                                    if (!response.ok) throw new Error('Failed to fetch address');
-                                    
-                                    const data = await response.json();
-                                    updateDisplay(data.address);
-                        
-                                } catch (error) {
-                                    showError(error.message);
+                                    const res = await fetch('/get_employee_location/');
+                                    if (!res.ok) throw new Error("Failed to fetch address.");
+                                    const data = await res.json();
+                                    address.textContent = "📍 " + (data.address || "Not available");
+                                    address.classList.remove('hidden');
+                                } catch (err) {
+                                    error.textContent = err.message;
+                                    error.classList.remove('hidden');
                                 } finally {
-                                    hideLoading();
+                                    loader.classList.add('hidden');
                                 }
                             }
-                        
-                            function updateDisplay(address) {
-                                addressElement.textContent = address || 'Location not available';
-                                addressElement.classList.remove('hidden');
-                                addressElement.style.opacity = '0';
-                                setTimeout(() => addressElement.style.opacity = '1', 10); // Fade-in effect
-                            }
-                        
-                            function showLoading() {
-                                loader.classList.remove('hidden');
-                                addressElement.classList.add('hidden');
-                            }
-                        
-                            function hideLoading() {
-                                loader.classList.add('hidden');
-                            }
-                        
-                            function showError(message) {
-                                errorElement.textContent = message;
-                                errorElement.classList.remove('hidden');
-                                addressElement.classList.add('hidden');
-                            }
-                        
-                            function clearError() {
-                                errorElement.classList.add('hidden');
-                            }
+    
+                            loadAddress();
                         });
                     </script>
+                    {% else %}
+                    <p class="text-orange-400">Please log in to see your address.</p>
+                    {% endif %}
                 </li>
             </ul>
-        </nav>
+        </div>
     </header>
     {% block content %}{% endblock %}
     <footer class="w-full mt-10 px-12 pt-12 pb-0">

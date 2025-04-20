@@ -57,6 +57,7 @@ def save_profile_location(request):
 
     return JsonResponse({'error': 'Invalid request method.'}, status=405)
 
+
 @csrf_exempt
 @login_required
 def save_employee_location(request):
@@ -71,14 +72,19 @@ def save_employee_location(request):
         if lat is None or lon is None:
             return JsonResponse({'error': 'Latitude and longitude are required.'}, status=400)
 
+        try:
+            lat = Decimal(str(lat))
+            lon = Decimal(str(lon))
+        except InvalidOperation:
+            return JsonResponse({'error': 'Invalid latitude or longitude format.'}, status=400)
+
         employee = Employee.objects.filter(user=request.user).first()
         if not employee:
             return JsonResponse({'error': 'Employee profile not found.'}, status=404)
 
-        lat = Decimal(str(lat))
-        lon = Decimal(str(lon))
-
         if (
+            employee.location_lat is not None and
+            employee.location_long is not None and
             Decimal(str(employee.location_lat)) == lat and
             Decimal(str(employee.location_long)) == lon and
             employee.address
