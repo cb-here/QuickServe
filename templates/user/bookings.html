@@ -82,7 +82,7 @@
                         <span>{{ booking.booking_date }}</span>
                     </div>
                     {% if booking.status == 'accepted' %}
-                        <a href="{% url 'track_employee' booking.assigned_employee.id %}">Track Now</a>
+                        <a href="{% url 'track_employee' booking.assigned_employee.id %}" className="bg-green-400 px-2 py-1">Track Now</a>
                     {% endif %}
                     <div class="flex items-center text-gray-600">
                         <svg class="w-5 h-5 mr-2 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
