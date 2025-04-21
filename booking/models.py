@@ -117,7 +117,7 @@ class Booking(models.Model):
         """Send a notification to an employee using Firebase."""
         if employee.fcm_token:
             data = {
-                "click_action":f"http://localhost:8000/booking/accept_booking/{self.id}",
+                "click_action":f"https://quickserve-v689.onrender.com/booking/accept_booking/{self.id}",
             }
             notification = messaging.Notification(
                 title="New Booking Assignment",
