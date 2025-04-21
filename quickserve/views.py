@@ -190,8 +190,8 @@ def get_location(request):
         return JsonResponse({"success": False, "message": "Address not found"}, status=404)
     
 @login_required
-def get_employee_location(request, employee_id):
-    employee = get_object_or_404(Employee, id = employee_id)
+def get_employee_location(request):
+    employee = get_object_or_404(Employee)
     
     if not employee.location_lat and not employee.location_long:
         return JsonResponse({'error': 'Location not available'}, status = 404)

@@ -20,7 +20,7 @@ urlpatterns = [
     path('save-employee-location/', views.save_employee_location, name='save_employee_location'),
     path('employee/', include('employee.urls')),
     path('get-location/', views.get_location, name='get_location'),
-    path('get_employee_location/<int:employee_id>', views.get_employee_location, name = 'get_employee_location'),
+    path('get_employee_location/', views.get_employee_location, name = 'get_employee_location'),
     path('booking/', include('booking.urls')),
     path('subservices/<slug:service_slug>', views.subservices, name='subservices'),
     path("update-fcm-token/", views.update_fcm_token, name='update-fcm-token'),
