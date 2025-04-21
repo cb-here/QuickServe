@@ -191,7 +191,7 @@ def get_location(request):
     
 @login_required
 def get_employee_location(request):
-    employee = get_object_or_404(Employee)
+    employee = req.user
     
     if not employee.location_lat and not employee.location_long:
         return JsonResponse({'error': 'Location not available'}, status = 404)
